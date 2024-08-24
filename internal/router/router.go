@@ -8,8 +8,9 @@ import (
 func Init() *mux.Router {
 	r := mux.NewRouter()
 	client := config.GetDBClient()
+  redis := config.GetRedisClient()
 
-	initRoutes(r, client)
+	initRoutes(r, client, redis)
 
 	return r
 }

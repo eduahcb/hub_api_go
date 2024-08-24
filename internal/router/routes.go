@@ -9,14 +9,16 @@ import (
 	usershandlers "github.com/eduahcb/hub_api_go/internal/resources/users/handlers"
 	"github.com/eduahcb/hub_api_go/pkg/responses"
 	"github.com/gorilla/mux"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func initRoutes(r *mux.Router, client *gorm.DB) {
+func initRoutes(r *mux.Router, client *gorm.DB, rdb *redis.Client) {
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	db := &database.Database{
 		Client: client,
+    Redis: rdb,
 	}
 
 	api.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
@@ -34,12 +36,16 @@ func initRoutes(r *mux.Router, client *gorm.DB) {
 	// private routes
     
   // profile
-	api.HandleFunc("/me", middlewares.Authentication(usershandlers.Profile(db))).Methods(http.MethodGet)
+	api.HandleFunc("/me", middlewares.Authentication(db, usershandlers.Profile(db))).Methods(http.MethodGet)
+
+
+  // signout
+	api.HandleFunc("/signout", middlewares.Authentication(db, usershandlers.Signout(db))).Methods(http.MethodGet)
 
   //techs
-	api.HandleFunc("/techs", middlewares.Authentication(techshandlers.GetAll(db))).Methods(http.MethodGet)
-	api.HandleFunc("/techs", middlewares.Authentication(techshandlers.Create(db))).Methods(http.MethodPost)
-	api.HandleFunc("/techs/{id}", middlewares.Authentication(techshandlers.GetById(db))).Methods(http.MethodGet)
-	api.HandleFunc("/techs/{id}", middlewares.Authentication(techshandlers.Delete(db))).Methods(http.MethodDelete)
-	api.HandleFunc("/techs/{id}", middlewares.Authentication(techshandlers.Update(db))).Methods(http.MethodPut)
+	api.HandleFunc("/techs", middlewares.Authentication(db, techshandlers.GetAll(db))).Methods(http.MethodGet)
+	api.HandleFunc("/techs", middlewares.Authentication(db, techshandlers.Create(db))).Methods(http.MethodPost)
+	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.GetById(db))).Methods(http.MethodGet)
+	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.Delete(db))).Methods(http.MethodDelete)
+	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.Update(db))).Methods(http.MethodPut)
 }

@@ -58,3 +58,18 @@ func TestValidateToken(t *testing.T) {
 		assert.Equal(uint(2), userId, "they should be equal")
 	})
 }
+
+func TestGenerateTokenHash(t *testing.T) {
+	  assert := assert.New(t)
+    
+    t.Run("createst token hash", func(_ *testing.T) {
+      expirationTime := time.Now().Add(time.Second * 1).Unix()
+      token, _ := Token(uint(2), expirationTime, "my_secret")
+
+
+      tokenHash := GenerateTokenHash(token)
+
+      assert.NotNil(tokenHash, "should be not nil")
+    })
+
+}

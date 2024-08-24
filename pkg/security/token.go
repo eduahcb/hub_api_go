@@ -1,6 +1,7 @@
 package security
 
 import (
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"time"
@@ -62,4 +63,14 @@ func ValidateToken(tokenString, secretKey string) (uint, time.Duration, error) {
 	expirationTimeDuration := getExpirationTimeDuration(int64(expirationTime))
 
 	return uint(userId), expirationTimeDuration, err
+}
+
+func GenerateTokenHash(token string) []byte {
+  hasher := sha256.New()
+
+  hasher.Write([]byte(token))
+
+  hash := hasher.Sum(nil)
+
+  return hash
 }

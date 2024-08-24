@@ -1,10 +1,14 @@
 package config
 
-import "gorm.io/gorm"
+import (
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
+)
 
 var (
 	entities []interface{}
 	db       *gorm.DB
+  rdb      *redis.Client
 )
 
 func SetEntities(values []interface{}) {
@@ -13,6 +17,10 @@ func SetEntities(values []interface{}) {
 
 func GetDBClient() *gorm.DB {
 	return db
+}
+
+func GetRedisClient() *redis.Client {
+  return rdb
 }
 
 func Init() error {
@@ -25,6 +33,8 @@ func Init() error {
 	if err != nil {
 		return err
 	}
+
+  rdb = initRedis()
 
 	return nil
 }

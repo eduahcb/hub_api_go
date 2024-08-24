@@ -6,12 +6,14 @@ import (
 	"strings"
 
 	"github.com/eduahcb/hub_api_go/config"
+	"github.com/eduahcb/hub_api_go/internal/blocklist"
+	"github.com/eduahcb/hub_api_go/internal/database"
 	customErrors "github.com/eduahcb/hub_api_go/pkg/errors"
 	"github.com/eduahcb/hub_api_go/pkg/responses"
 	"github.com/eduahcb/hub_api_go/pkg/security"
 )
 
-func Authentication(next http.HandlerFunc) http.HandlerFunc {
+func Authentication(db *database.Database ,next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
 
@@ -26,6 +28,13 @@ func Authentication(next http.HandlerFunc) http.HandlerFunc {
 		}
 
     token := strings.Replace(authorization, "Bearer ", "", 1)
+
+    tokenExists := blocklist.ContainsTokenHash(db, token)
+
+    if(tokenExists) {
+      responses.Unauthorized(w, &customErrors.Unauthorized{Message: "Invalid token by logout"})
+      return
+    }
 
     userId, expirationTime, err  := security.ValidateToken(token, config.Envs.SecretKey)
     
