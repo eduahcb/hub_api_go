@@ -3,13 +3,13 @@ package usersservices
 import (
 	"errors"
 	"strings"
-	"time"
 
 	"github.com/eduahcb/hub_api_go/config"
 	"github.com/eduahcb/hub_api_go/internal/database"
 	"github.com/eduahcb/hub_api_go/internal/entities"
 	customErrors "github.com/eduahcb/hub_api_go/pkg/errors"
 	"github.com/eduahcb/hub_api_go/pkg/security"
+	"github.com/eduahcb/hub_api_go/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -32,7 +32,7 @@ func CreateUser(user entities.User, db *database.Database) (string, error) {
 		return "", &customErrors.InternalServerError{}
 	}
 
-	expirationTime := time.Now().Add(time.Minute * 15).Unix()
+	expirationTime := utils.ExpirationTime(config.Envs.ExpirationTime) 
 	token, _ := security.Token(user.ID, expirationTime, config.Envs.SecretKey)
 
 	return token, nil

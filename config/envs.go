@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -12,6 +13,7 @@ type Envinroments struct {
 	Port      string
 	SecretKey string
 	DbURL     string
+  ExpirationTime int  
 }
 
 var Envs Envinroments
@@ -32,8 +34,17 @@ func initEnvs() error {
   port := os.Getenv("PORT")
   if port == "" {
     Envs.Port = "8080"
+  } else {
+    Envs.Port = port
   }
-  Envs.Port = port
+
+
+  expirationTime := os.Getenv("EXPIRATION_TIME")
+  if expirationTime == "" {
+    Envs.ExpirationTime = 60
+  } else {
+    Envs.ExpirationTime, _ = strconv.Atoi(expirationTime)
+  }
 
 	secretKey, ok := os.LookupEnv("SECRET_KEY")
 	if !ok || secretKey == "" {

@@ -2,7 +2,6 @@ package usersservices
 
 import (
 	"errors"
-	"time"
 
 	"github.com/eduahcb/hub_api_go/config"
 	"github.com/eduahcb/hub_api_go/internal/database"
@@ -10,6 +9,7 @@ import (
 	"github.com/eduahcb/hub_api_go/internal/resources/users"
 	customErrors "github.com/eduahcb/hub_api_go/pkg/errors"
 	"github.com/eduahcb/hub_api_go/pkg/security"
+	"github.com/eduahcb/hub_api_go/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +31,7 @@ func CreateToken(signinRequest users.SigninRequest, db *database.Database) (stri
 		return "", &customErrors.Unauthorized{Message: "Please check your credentials and try again"}
 	}
 
-	expiration := time.Now().Add(time.Minute * 15).Unix()
+	expiration := utils.ExpirationTime(config.Envs.ExpirationTime)
 
 	token, _ := security.Token(user.ID, expiration, config.Envs.SecretKey)
 
