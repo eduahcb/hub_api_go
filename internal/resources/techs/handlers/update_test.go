@@ -100,24 +100,6 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(http.StatusInternalServerError, expectedStatus, "they should be equal")
 	})
 
-	t.Run("when an internal server error occurs when searching tech", func(_ *testing.T) {
-		body := createUpdateBody("svelte", 1)
-
-		db, dbMock, mock := databaseMockSuite()
-		defer dbMock.Close()
-
-		levelRow := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "iniciante")
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "levels"`)).WillReturnRows(levelRow)
-
-		err := errors.New("internal server error")
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "techs"`)).WillReturnError(err)
-
-		response, _ := createUpdateRequest(body, db)
-
-		expectedStatus := response.Result().StatusCode
-		assert.Equal(http.StatusInternalServerError, expectedStatus, "they should be equal")
-	})
-
 	t.Run("when the tech was not found", func(_ *testing.T) {
 		body := createUpdateBody("svelte", 1)
 
@@ -127,8 +109,9 @@ func TestUpdate(t *testing.T) {
 		levelRow := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "iniciante")
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "levels"`)).WillReturnRows(levelRow)
 
-		err := gorm.ErrRecordNotFound
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "techs"`)).WillReturnError(err)
+		mock.ExpectBegin()
+		mock.ExpectExec(regexp.QuoteMeta(`UPDATE "techs" SET`)).WillReturnResult(sqlmock.NewResult(0, 0))
+		mock.ExpectCommit()
 
 		response, _ := createUpdateRequest(body, db)
 
@@ -145,11 +128,7 @@ func TestUpdate(t *testing.T) {
 		levelRow := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "iniciante")
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "levels"`)).WillReturnRows(levelRow)
 
-		techRow := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "tech")
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "techs"`)).WillReturnRows(techRow)
-
 		mock.ExpectBegin()
-
 		err := errors.New("internal error")
 		mock.ExpectExec(regexp.QuoteMeta(`UPDATE "techs" SET`)).WillReturnError(err)
 		mock.ExpectRollback()
@@ -168,9 +147,6 @@ func TestUpdate(t *testing.T) {
 
 		row := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "iniciante")
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "levels"`)).WillReturnRows(row)
-
-		techRow := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "tech")
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "techs"`)).WillReturnRows(techRow)
 
 		mock.ExpectBegin()
 		mock.ExpectExec(regexp.QuoteMeta(`UPDATE "techs" SET`)).WillReturnResult(sqlmock.NewResult(1, 1))

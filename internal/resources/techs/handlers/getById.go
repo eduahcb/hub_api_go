@@ -20,11 +20,7 @@ func GetById(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 
-		techId, err := strconv.ParseUint(params["id"], 10, 64)
-		if err != nil {
-			responses.BadRequest(w, &customErrors.BadRequest{})
-			return
-		}
+		techId, _ := strconv.ParseUint(params["id"], 10, 64)
 
 		tech, err := techsservices.GetById(techId, db)
 		if err != nil {

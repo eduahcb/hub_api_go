@@ -2,6 +2,7 @@ package usersservices
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/eduahcb/hub_api_go/config"
@@ -22,15 +23,12 @@ func CreateUser(user entities.User, db *database.Database) (string, error) {
 		return "", &customErrors.InternalServerError{}
 	}
 
-	err = db.Client.First(&user, "email = ?", user.Email).Error
-
-	if err == nil {
-		return "", &customErrors.BadRequest{Message: "Email already exists"}
-	}
-
 	err = db.Client.Create(&user).Error
 
 	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key") {
+			return "", &customErrors.BadRequest{Message: "Email already exists"}
+		}
 		return "", &customErrors.InternalServerError{}
 	}
 

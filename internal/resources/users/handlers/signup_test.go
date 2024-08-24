@@ -109,8 +109,11 @@ func TestSignup(t *testing.T) {
 		row := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "module 1")
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "modules"`)).WillReturnRows(row)
 
-		userRow := sqlmock.NewRows([]string{"id", "email"}).AddRow(1, "test@test.com")
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).WillReturnRows(userRow)
+		mock.ExpectBegin()
+    
+    err := errors.New("duplicate key")
+		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users"`)).WillReturnError(err)
+		mock.ExpectRollback()
 
 		response, _ := createSignupRequest(body, db)
 
@@ -127,12 +130,10 @@ func TestSignup(t *testing.T) {
 		row := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "module 1")
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "modules"`)).WillReturnRows(row)
 
-		err := gorm.ErrRecordNotFound
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).WillReturnError(err)
 
 		mock.ExpectBegin()
 
-		err = errors.New("insert error")
+    err := errors.New("insert error")
 		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users"`)).WillReturnError(err)
 		mock.ExpectRollback()
 
@@ -150,9 +151,6 @@ func TestSignup(t *testing.T) {
 
 		row := sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "module 1")
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "modules"`)).WillReturnRows(row)
-
-		err := gorm.ErrRecordNotFound
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users"`)).WillReturnError(err)
 
 		mock.ExpectBegin()
 

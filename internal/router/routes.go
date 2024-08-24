@@ -32,6 +32,11 @@ func initRoutes(r *mux.Router, client *gorm.DB) {
 	api.HandleFunc("/signup", usershandlers.Signup(db)).Methods(http.MethodPost)
 
 	// private routes
+    
+  // profile
+	api.HandleFunc("/me", middlewares.Authentication(usershandlers.Profile(db))).Methods(http.MethodGet)
+
+  //techs
 	api.HandleFunc("/techs", middlewares.Authentication(techshandlers.GetAll(db))).Methods(http.MethodGet)
 	api.HandleFunc("/techs", middlewares.Authentication(techshandlers.Create(db))).Methods(http.MethodPost)
 	api.HandleFunc("/techs/{id}", middlewares.Authentication(techshandlers.GetById(db))).Methods(http.MethodGet)

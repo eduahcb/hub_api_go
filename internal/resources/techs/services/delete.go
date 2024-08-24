@@ -5,13 +5,14 @@ import (
 	"github.com/eduahcb/hub_api_go/internal/entities"
 	"github.com/eduahcb/hub_api_go/internal/resources/techs"
 	customErrors "github.com/eduahcb/hub_api_go/pkg/errors"
+	"gorm.io/gorm/clause"
 )
 
 func Delete(techId uint64, db *database.Database) (techs.TechResponse, error) {
 	tech := entities.Tech{}
 	var techResponse techs.TechResponse
 
-	result := db.Client.Delete(&tech, techId)
+	result := db.Client.Clauses(clause.Returning{}).Delete(&tech, techId)
 	if result.Error != nil {
 		return techResponse, &customErrors.InternalServerError{}
 	} else if result.RowsAffected == 0 {
