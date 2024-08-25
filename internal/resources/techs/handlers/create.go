@@ -15,6 +15,15 @@ type CreateResponse struct {
 	Tech techs.TechResponse `json:"tech"`
 }
 
+//	@Summary		Cria uma tecnologia
+//	@Description	Cria uma nova tecnologia
+//	@Tags			Techs
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body	techs.TechRequest	true	"Requisição para se cadastrar"
+//	@Router			/techs [post]
+//	@Security		BearerAuth
+//	@Success		201	{object}	techs.TechResponse
 func Create(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId := r.Context().Value("userId").(uint)
@@ -33,7 +42,7 @@ func Create(db *database.Database) http.HandlerFunc {
 		}
 
 		tech := techRequest.ToEntity()
-    tech.UserID = userId
+		tech.UserID = userId
 
 		techResponse, err := techsservices.Create(tech, db)
 		if err != nil {

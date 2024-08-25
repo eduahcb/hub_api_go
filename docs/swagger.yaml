@@ -1,0 +1,287 @@
+basePath: /api/v1
+definitions:
+  techs.LevelResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  techs.TechRequest:
+    properties:
+      level_id:
+        type: integer
+      name:
+        type: string
+    required:
+    - level_id
+    - name
+    type: object
+  techs.TechResponse:
+    properties:
+      id:
+        type: integer
+      level:
+        $ref: '#/definitions/techs.LevelResponse'
+      name:
+        type: string
+    type: object
+  users.ModuleResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  users.ProfileResponse:
+    properties:
+      bio:
+        type: string
+      contact:
+        type: string
+      id:
+        type: integer
+      module:
+        $ref: '#/definitions/users.ModuleResponse'
+      name:
+        type: string
+    type: object
+  users.SigninRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  users.SignupRequest:
+    properties:
+      bio:
+        type: string
+      confirm_password:
+        type: string
+      contact:
+        type: string
+      email:
+        type: string
+      module_id:
+        type: integer
+      name:
+        maxLength: 50
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - confirm_password
+    - email
+    - module_id
+    - name
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Primeira api em go
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Hub API Example
+  version: "1.0"
+paths:
+  /me:
+    get:
+      consumes:
+      - application/json
+      description: Traz o informações essências do usuário
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/users.ProfileResponse'
+      security:
+      - BearerAuth: []
+      summary: Informações do usuário
+      tags:
+      - User
+  /signin:
+    post:
+      consumes:
+      - application/json
+      description: Login de usuário no qual retorna o token caso de sucesso
+      parameters:
+      - description: Requisição para login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/users.SigninRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Sigin de usuário
+      tags:
+      - User
+  /signout:
+    get:
+      consumes:
+      - application/json
+      description: Sigin out de usuário no qual
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: Sigin out de usuário
+      tags:
+      - User
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Usuário se cadastra
+      parameters:
+      - description: Requisição para se cadastrar
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/users.SignupRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Sigin up de usuário
+      tags:
+      - User
+  /techs:
+    get:
+      consumes:
+      - application/json
+      description: lista todas as tecnologias do usuário
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/techs.TechResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Lista todas as tecnologias
+      tags:
+      - Techs
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova tecnologia
+      parameters:
+      - description: Requisição para se cadastrar
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/techs.TechRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/techs.TechResponse'
+      security:
+      - BearerAuth: []
+      summary: Cria uma tecnologia
+      tags:
+      - Techs
+    put:
+      consumes:
+      - application/json
+      description: atualiza tecnlogia
+      parameters:
+      - description: Requisição para se cadastrar
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/techs.TechRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/techs.TechResponse'
+      security:
+      - BearerAuth: []
+      summary: Atualiza tecnlogia
+      tags:
+      - Techs
+  /techs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: exclui uma nova tecnologia
+      parameters:
+      - description: tech id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/techs.TechResponse'
+      security:
+      - BearerAuth: []
+      summary: Deleta uma tecnologia
+      tags:
+      - Techs
+    get:
+      consumes:
+      - application/json
+      description: lista uma única tecnologia por id
+      parameters:
+      - description: tech id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/techs.TechResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Lista tecnologia por id
+      tags:
+      - Techs
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

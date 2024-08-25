@@ -17,11 +17,20 @@ type UpdateResponse struct {
 	Tech techs.TechResponse `json:"tech"`
 }
 
+// @Summary		Atualiza tecnlogia
+// @Description	atualiza tecnlogia
+// @Tags			Techs
+// @Accept			json
+// @Produce		json
+// @Param			request	body	techs.TechRequest	true	"Requisição para se cadastrar"
+// @Router		/techs [put]
+// @Security		BearerAuth
+// @Success		200	{object}	techs.TechResponse
 func Update(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var techRequest techs.TechRequest
-		
-    params := mux.Vars(r)
+
+		params := mux.Vars(r)
 
 		techId, _ := strconv.ParseUint(params["id"], 10, 64)
 

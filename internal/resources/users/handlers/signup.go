@@ -11,6 +11,15 @@ import (
 	"github.com/eduahcb/hub_api_go/pkg/utils"
 )
 
+//	@Summary		Sigin up de usuário
+//	@Description	Usuário se cadastra
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body	users.SignupRequest	true	"Requisição para se cadastrar"
+//	@Router			/signup [post]
+//	@Header			204	{string}	token	"token"
+//	@Success		204
 func Signup(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var singupRequest users.SignupRequest

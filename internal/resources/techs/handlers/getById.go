@@ -16,6 +16,15 @@ type GetByIdResponse struct {
 	Tech techs.TechResponse `json:"tech"`
 }
 
+// @Summary		Lista tecnologia por id
+// @Description	lista uma única tecnologia por id
+// @Tags			Techs
+// @Accept			json
+// @Produce		json
+// @Router		/techs/{id} [get]
+// @Param			id	path	int	true	"tech id"
+// @Security		BearerAuth
+// @Success		200	{array}	techs.TechResponse
 func GetById(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -29,8 +38,8 @@ func GetById(db *database.Database) http.HandlerFunc {
 				responses.NotFound(w, err)
 				return
 			default:
-        responses.InternalServerError(w, err)
-        return
+				responses.InternalServerError(w, err)
+				return
 			}
 		}
 

@@ -11,6 +11,15 @@ import (
 	"github.com/eduahcb/hub_api_go/pkg/utils"
 )
 
+//	@Summary		Sigin de usuário
+//	@Description	Login de usuário no qual retorna o token caso de sucesso
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body	users.SigninRequest	true	"Requisição para login"
+//	@Router			/signin [post]
+//	@Header			204	{string}	token	"token"
+//	@Success		204
 func Signin(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		signinRequest := users.SigninRequest{}

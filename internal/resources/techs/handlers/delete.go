@@ -16,6 +16,15 @@ type DeleteResponse struct {
 	Tech techs.TechResponse `json:"tech"`
 }
 
+// @Summary		Deleta uma tecnologia
+// @Description	exclui uma nova tecnologia
+// @Tags			Techs
+// @Accept			json
+// @Produce		json
+// @Param			id	path	int	true	"tech id"
+// @Router			/techs/{id} [delete]
+// @Security		BearerAuth
+// @Success		200	{object}	techs.TechResponse
 func Delete(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -29,8 +38,8 @@ func Delete(db *database.Database) http.HandlerFunc {
 				responses.NotFound(w, err)
 				return
 			default:
-        responses.InternalServerError(w, err)
-        return
+				responses.InternalServerError(w, err)
+				return
 			}
 		}
 

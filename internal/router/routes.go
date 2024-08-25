@@ -11,6 +11,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 func initRoutes(r *mux.Router, client *gorm.DB, rdb *redis.Client) {
@@ -18,8 +20,10 @@ func initRoutes(r *mux.Router, client *gorm.DB, rdb *redis.Client) {
 
 	db := &database.Database{
 		Client: client,
-    Redis: rdb,
+		Redis:  rdb,
 	}
+
+	api.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler).Methods(http.MethodGet)
 
 	api.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		type response struct {
@@ -34,15 +38,14 @@ func initRoutes(r *mux.Router, client *gorm.DB, rdb *redis.Client) {
 	api.HandleFunc("/signup", usershandlers.Signup(db)).Methods(http.MethodPost)
 
 	// private routes
-    
-  // profile
+
+	// profile
 	api.HandleFunc("/me", middlewares.Authentication(db, usershandlers.Profile(db))).Methods(http.MethodGet)
 
-
-  // signout
+	// signout
 	api.HandleFunc("/signout", middlewares.Authentication(db, usershandlers.Signout(db))).Methods(http.MethodGet)
 
-  //techs
+	//techs
 	api.HandleFunc("/techs", middlewares.Authentication(db, techshandlers.GetAll(db))).Methods(http.MethodGet)
 	api.HandleFunc("/techs", middlewares.Authentication(db, techshandlers.Create(db))).Methods(http.MethodPost)
 	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.GetById(db))).Methods(http.MethodGet)
