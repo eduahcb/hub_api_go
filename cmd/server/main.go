@@ -47,5 +47,7 @@ func main() {
 	r := router.Init()
 
 	fmt.Printf("server is running on port: %s", config.Envs.Port)
+	log.Printf("server is running on port: %s", config.Envs.Port)
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", config.Envs.Port), r))
 }

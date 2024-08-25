@@ -1,0 +1,49 @@
+services:
+  redis:
+    image: redis
+    container_name: hub_api_redis
+    networks:
+      - network
+  postgres:
+    image: postgres
+    container_name: hub_api_postgres
+    environment:
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=hub_dev
+    networks:
+      - network
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    ports:
+      - 5432:5432
+  api:
+    build: .
+    container_name: hub_api
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - REDIS_ADDR=localhost:6379
+      - SECRET_KEY=ZHdqYWR3YWR3YWRhd2tkamFrbGpkbHdha2pka3dhZGFqZGxhd2tqZHdrbGFqZGts
+      - DB_URL=postgres://postgres:123@hub_api_postgres/hub_dev
+      - REDIS_ADDR=hub_api_redis
+      - HUB_API=staging
+    entrypoint: ["sh", "-c", "sh ./run_seeds.sh && ./run.sh"]
+    networks:
+      - network
+    depends_on:
+      postgres:
+        condition: service_healthy
+networks:
+  network:
+    name: hub_newtwork
+    driver: bridge
