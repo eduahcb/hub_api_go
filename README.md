@@ -1,4 +1,4 @@
-# Simsples API para aprender GO lang
+# Simples API para aprender GO lang
 
 aprendendo golang e criando uma api com autenticação JWT e blocklist
 
