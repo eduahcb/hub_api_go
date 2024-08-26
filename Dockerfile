@@ -18,7 +18,6 @@ COPY --from=build api/build ./build
 COPY --from=build api/run.sh .
 COPY --from=build api/scripts/run_seeds.sh .
 
-RUN ls -a
 RUN chmod +x ./run.sh
 RUN chmod +x ./run_seeds.sh
 
