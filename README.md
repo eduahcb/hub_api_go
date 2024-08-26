@@ -2,6 +2,8 @@
 
 aprendendo golang e criando uma api com autenticação JWT e blocklist
 
+![image](https://github.com/user-attachments/assets/322201c9-8f35-441a-a8c0-672b22e9ecd1)
+
 ## Tecnologias
 
 - Go
