@@ -52,6 +52,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/modules": {
+            "get": {
+                "description": "lista todas as módulos disponiveis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Modules"
+                ],
+                "summary": "Lista todas os módulos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/modules.ModuleResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/signin": {
             "post": {
                 "description": "Login de usuário no qual retorna o token caso de sucesso",
@@ -321,6 +347,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "modules.ModuleResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "techs.LevelResponse": {
             "type": "object",
             "properties": {
