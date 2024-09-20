@@ -5,6 +5,7 @@ import (
 
 	"github.com/eduahcb/hub_api_go/internal/database"
 	"github.com/eduahcb/hub_api_go/internal/middlewares"
+	levelshandlers "github.com/eduahcb/hub_api_go/internal/resources/levels/handlers"
 	moduleshandlers "github.com/eduahcb/hub_api_go/internal/resources/modules/handlers"
 	techshandlers "github.com/eduahcb/hub_api_go/internal/resources/techs/handlers"
 	usershandlers "github.com/eduahcb/hub_api_go/internal/resources/users/handlers"
@@ -37,7 +38,8 @@ func initRoutes(r *mux.Router, client *gorm.DB, rdb *redis.Client) {
 	// public routes
 	api.HandleFunc("/signin", usershandlers.Signin(db)).Methods(http.MethodPost)
 	api.HandleFunc("/signup", usershandlers.Signup(db)).Methods(http.MethodPost)
-  api.HandleFunc("/modules", moduleshandlers.GetAll(db)).Methods(http.MethodGet)
+	api.HandleFunc("/modules", moduleshandlers.GetAll(db)).Methods(http.MethodGet)
+	api.HandleFunc("/levels", levelshandlers.GetAll(db)).Methods(http.MethodGet)
 
 	// private routes
 
@@ -53,6 +55,5 @@ func initRoutes(r *mux.Router, client *gorm.DB, rdb *redis.Client) {
 	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.GetById(db))).Methods(http.MethodGet)
 	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.Delete(db))).Methods(http.MethodDelete)
 	api.HandleFunc("/techs/{id}", middlewares.Authentication(db, techshandlers.Update(db))).Methods(http.MethodPut)
-
 
 }

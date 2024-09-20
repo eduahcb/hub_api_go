@@ -1,5 +1,12 @@
 basePath: /api/v1
 definitions:
+  levels.LevelResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   modules.ModuleResponse:
     properties:
       id:
@@ -102,6 +109,23 @@ info:
   title: Hub API Example
   version: "1.0"
 paths:
+  /levels:
+    get:
+      consumes:
+      - application/json
+      description: lista todos os levels disponiveis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/levels.LevelResponse'
+            type: array
+      summary: Lista todos os levels
+      tags:
+      - Levels
   /me:
     get:
       consumes:
