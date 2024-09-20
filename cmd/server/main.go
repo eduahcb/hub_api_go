@@ -9,6 +9,7 @@ import (
 	_ "github.com/eduahcb/hub_api_go/docs"
 	"github.com/eduahcb/hub_api_go/internal/entities"
 	"github.com/eduahcb/hub_api_go/internal/router"
+	"github.com/rs/cors"
 )
 
 //	@title			Hub API Example
@@ -44,10 +45,14 @@ func main() {
 		log.Fatal("something went wrong!!! ", err)
 	}
 
+	c := cors.New(cors.Options{
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+	})
+
 	r := router.Init()
 
 	fmt.Printf("server is running on port: %s", config.Envs.Port)
 	log.Printf("server is running on port: %s", config.Envs.Port)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", config.Envs.Port), r))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", config.Envs.Port), c.Handler(r)))
 }
